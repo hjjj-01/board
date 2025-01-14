@@ -1,0 +1,6 @@
+.table{
+    height: 23vh;
+    overflow: auto !important;
+    display: flex;
+    scrollbar-width: none;
+}

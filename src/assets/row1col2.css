@@ -1,0 +1,30 @@
+#custom-table {
+    background-color: transparent !important;
+    background-image: url('./src/stip2.png');
+    background-repeat: repeat;
+    background-size: 110% 16.9%;
+    background-position: center;
+    font-size: 0.6vw ;
+    
+    
+}
+#custom-table tr {
+    background-color: transparent !important;
+    color: white !important;
+
+}
+
+#custom-table th   {
+    background-color: transparent !important;
+    border-bottom: 1.9px solid  rgb(91, 169, 214) !important;
+    padding: 0.3vw 0 !important;
+    font-size: 0.5vw !important;
+}
+
+
+
+#custom-table td{
+    border-bottom: 1.1px solid rgb(91, 169, 214) !important;
+    height: 0.5vw !important;
+    padding: 0.2vh 0 !important;
+}
