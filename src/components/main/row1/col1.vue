@@ -1,143 +1,184 @@
 <template>
-    <div class="row1-col1" >
-        <div class="header">机台效率区间</div>
-        <div ref="chart" class="echarts">
+    <div class="row1-col1">
+        <div class="title">近半年港益总部生产趋势
+            <img src="/src/assets/src/zs3.png"  alt="">
+
+        </div>
+        <div ref="chart" class="chart">
 
         </div>
     </div>
 </template>
 <script setup>
-    import * as echarts from 'echarts'
-    import { onMounted,ref,onUnmounted } from "vue";
+    import { ref,onMounted,onUnmounted } from 'vue'
+    import *as echarts from 'echarts'
     import {getrandom1} from '@/assets/src/JS/random'
-        //当前视口宽度
-    let nowClientWidth = document.documentElement.clientWidth;
-    let nowClientHeight = document.documentElement.clientHeight;
-    function nowSizeW(val,initWidth=1920){
-        return val * (nowClientWidth/initWidth);
-    }
-    function nowSizeH(val,initHeight=1080){
-        return val * (nowClientHeight/initHeight);
-    }
+    let nowClientWidth = (document.documentElement.clientWidth);
+     let nowClientHeight = (document.documentElement.clientHeight);
+     function nowSize(val,initWidth=1920){
+         return val * (nowClientWidth/initWidth);
+     }
+     function nowSize2(val,initHeight=1080){
+         return val * (nowClientHeight/initHeight);
+     }
 
+    const datawf=ref()
+    const datadx=ref()
+    
     const chart = ref(null)
-    const A =ref([])
-    const B =ref('')
-    const data = ref([
-            {name:'95%-100%',value:'',itemStyle:{color:'#0099ff'}},
-            {name:'90%-95%',value:''},
-            {name:'85%-90%',value:11},
-            {name:'80%-85%',value:7},
-            {name:'75%-80%',value:3},
-            {name:'70%以下',value:2}
-    ])
+    const getdatearray=()=>{
+        let datearr=[]
+        const today=new Date()
+        for(let i=0;i<6;i++){
+            const date=new Date()
+            date.setMonth(today.getMonth()-i)
+            datearr.unshift(`${date.getMonth()+1}`)
+        }
+        return datearr
+    }
+    onMounted(()=>{
+        datawf.value=getrandom1(6,5000,7000)
+        datadx.value=getrandom1(6,3200,3900)
 
-   
-    onMounted(() => {
-        A.value = getrandom1(1,126,129)
-        B.value = 160-A.value[0]
-        data.value[1].value = A.value[0]
-        data.value[0].value = B.value
-        const mychart = echarts.init(chart.value)
+
+        const datearr=getdatearray()
+
+        const mychart=echarts.init(chart.value)
         mychart.setOption({
-
             tooltip:{
-                trigger:'item'
+                trigger:'item',
+                formatter:'{b}月份产量 : {c}(吨)'
             },
+            xAxis:{
+                type:'category',
+                data:datearr,
+                axisLabel:{
+                    color:'#ffffff',
+                    fontSize:nowSize(14)
 
-            legend:{
-                orient:'vertical',
-                top:'12%',
-                right:'60%',
-                textStyle:{
-                    color:'#fff',
-                    fontSize:nowSizeW(12)
-                },               
-                    itemHeight:nowSizeW(16),
-                    itemWidth:nowSizeW(26)
-     
-            },
-            graphic:{
-                type:'image',
-                style:{
-                    image:'/zs1.png',
-                    width:nowSizeW(180),
-                    height:nowSizeH(60),
-                    x:nowSizeW(118),
-                    y:nowSizeH(190),
-                }
-            },
-
-            series:[{
-                type:'pie',
-                radius: ['40%', '75%'],
-                label:{
-                    show:false,
-                    position:'center'
                 },
-                left:'35%',
-                bottom:'15%',
+                boundaryGap: false
+            },
+            legend:{
+                show:true,
+                data:['无纺产量','短纤产量'],
+                textStyle:{
+                    color:'#ffffff',
+                    fontSize:nowSize(14)
+                },
+                top:'6%',
+                
+            },
+            yAxis:{
+                type:'value',
+                min:1000,
+                splitLine:{
+                    show:false
+                },
+                axisLine:{
+                    show:true
+                },
+                axisLabel:{
+                    color:'#ffffff',
+                    fontSize:nowSize(12),
+                    margin:15
 
-                emphasis:{
+
+                },
+               
+            },
+            grid:{
+                top:'25%',
+                left:'15%',
+                right:'5%',
+                bottom:'10%'
+            },
+            series:[
+                {
+                    name:'无纺产量',
+                    data:datawf.value,
+                    type:'line',
+                    // smooth:true,
                     label:{
                         show:true,
-                        fontSize:'15',
-                        color:'#fff'
+                        position:'top',
+                        color:'#a5b7c2',
                     },
+                    areaStyle:{
+                        color:new echarts.graphic.LinearGradient(0,0,0,1,[
+                            {offset:0,color:'#107ec7'},
+                            {offset:1,color:'#061731'}
+                        ])
+                    }
+
                 },
-                data:data.value
-            }]
+                {
+                    name:'短纤产量',
+                    data:datadx.value,
+                    type:'line',
+                    // smooth:true,
+                    label:{
+                        show:true,
+                        position:'top',
+                        color:'#a5b7c2',
+                    },
+                    areaStyle:{
+                        color:new echarts.graphic.LinearGradient(0,0,0,1,[
+                            {offset:0,color:'#49b67f'},
+                            {offset:1,color:'#061731'}
+                        ])
+                    }
+                }
+            ]
         })
-        let Index = 0;
-        const interval = setInterval(() => {
-                mychart.dispatchAction({
-                    type:'showTip',
-                    seriesIndex:0,
-                    dataIndex:Index,
-                });
-                mychart.dispatchAction({
-                    type:'highlight',
-                    seriesIndex:0,
-                    dataIndex:Index,
-                });
-                mychart.dispatchAction({
-                    type:'downplay',
-                    seriesIndex:0,
-                    dataIndex:(Index-1+6)%6,
-                });
-                Index = (Index+1)%6;
-            },1500);
-            onUnmounted(()=>{
-                clearInterval(interval)
+        let Indexseries=0
+        let Indexdata=0
+        const Interval=setInterval(() => {
+            mychart.dispatchAction({
+                type:'showTip',
+                seriesIndex: Indexseries,
+                dataIndex: Indexdata
             })
-    });
+            Indexseries = (Indexseries+1)%2
+            Indexdata = (Indexdata+1)%6
+        }, 2000)
+        onUnmounted(()=>{
+            clearInterval(Interval)
+        })
+    })
 
 
 </script>
 <style scoped>
-    .row1-col1 {
-        width: 99.5%;
-        height: 100%;
+     .row1-col1 {
+        width: 20.4vw;
+        height: 30.7vh;
         background-image: url(/src/assets/src/tip3.png);
         background-repeat: no-repeat;
         background-position: flex;
         background-size: 100% 100%;
     }
-    .echarts {
-        height: 88%;
-        width: 100%;
-        font-size: 25px;
-        /* background-color: rgb(160, 216, 233); */
-    }
-    .header {
-        padding-left: 1vw;
+    .title {
+        padding-left: 2vw;
         height: 3vh;
+        width: 80%;
         background-image: url(/src/assets/src/stip1.png);
         background-repeat: no-repeat;
-        background-position: flex;
-        background-size: 100% 100%; 
-        color: aliceblue;
+        background-position: center; 
+        background-size: 100% 100%;
+        color: #ffffff;
         line-height: 3vh;
+        font-size: 0.9vw;
         font-family: 'Microsoft YaHei';
+    }
+    .chart{
+        width: 100%;
+        height: 89%;
+    }
+    img{
+        width: 1.9vw;
+        height: 1.7vw;
+        position: absolute;
+        left: 42.8vw;
     }
 </style>

@@ -1,99 +1,204 @@
 <template>
-    <div class="col2">
-        <div class="title">机台效率排行</div>
-        <div class="scroll-container">
-            <el-table :data="displayedData"  height="23vh" class="scroll-table" id="custom-table">
-                <el-table-column prop="id" label="排名" :width=a align="center" />
-                <el-table-column prop="name" label="机台号" :width=b align="center" />
-                <el-table-column prop="effice" label="效率(%)" :width=c align="center" :formatter="(row)=>`${row.effice}%`"/>
-            </el-table>
+    <div class="row1-col2">
+        <div class="title">近半年港丰分部生产趋势
+            <img src="/src/assets/src/zs3.png"  alt="">
+        </div>
+        <div ref="chart" class="chart">
+
         </div>
     </div>
 </template>
-
 <script setup>
-    import {getrandom2,getrandom1} from '@/assets/src/JS/random'
-    import { ref, onMounted, onUnmounted } from 'vue';
-    //当前视口宽度
+    import { ref,onMounted,onUnmounted } from 'vue'
+    import *as echarts from 'echarts'
+    import {getrandom1} from '@/assets/src/JS/random'
     let nowClientWidth = (document.documentElement.clientWidth);
     function nowSize(val,initWidth=1920){
         return val * (nowClientWidth/initWidth);
     }
-    const a = ref(nowSize(70));
-    const b = ref(nowSize(83));
-    const c = ref(nowSize(90));
 
-    const tableData = ref([]);
-    // 滚动函数
-    const displayedData = ref([]);
-    let Index = 0;
-    const visiblerows = 5; // 可见行数
-    const updateDisplayedData = () => {
-        displayedData.value = tableData.value.slice(Index, Index + visiblerows);
-        Index = (Index + 5) % tableData.value.length; 
-    };
-
-    onMounted(() => {
-        // 生成随机数据
-        tableData.value=Array.from({length:15}).map(()=>({
-            name:String(getrandom1(1,1,60)).padStart(3,'0'),
-            effice:getrandom2(1,96,97)
-        }))
-
-
-
-        // 按效率排序
-        tableData.value.sort((a, b) => b.effice - a.effice);
-         // 排名从 1 开始
-        tableData.value.forEach((item, index) => {
-            item.id = index + 1;
-        });
-
-        //滚动
-        updateDisplayedData(); 
-        const interval = setInterval(updateDisplayedData, 1800);
+    const datajb=ref()
+    const datazj=ref()
+    const datajk=ref()
+    
+    const chart = ref(null)
+    const getdatearray=()=>{
+        let datearr=[]
+        const today=new Date()
+        for(let i=0;i<6;i++){
+            const date=new Date()
+            date.setMonth(today.getMonth()-i)
+            datearr.unshift(`${date.getMonth()+1}`)
+        }
+        return datearr
+    }
+    onMounted(()=>{
+        datajb.value=getrandom1(6,5000,7000)
+        datazj.value=getrandom1(6,2900,4000)
+        datajk.value=getrandom1(6,3600,4500)
 
 
+        const datearr=getdatearray()
 
-        onUnmounted(() => {
-            clearInterval(interval); 
-        });
+        const mychart=echarts.init(chart.value)
+        mychart.setOption({
+            tooltip:{
+                trigger:'item',
+                formatter:'{b}月份产量 : {c}(吨)'
+            },
+            xAxis:{
+                type:'category',
+                data:datearr,
+                axisLabel:{
+                    color:'#ffffff',
+                    fontSize:nowSize(14)
 
+                },
+                boundaryGap: false
+            },
+            legend:{
+                show:true,
+                data:['经编车间产量','贾卡产量','整经车间产量'],
+                textStyle:{
+                    color:'#ffffff',
+                    fontSize:nowSize(14)
+                },
+                top:'6%'
+            },
+            yAxis:{
+                type:'value',
+                min:1000,
+                splitLine:{
+                    show:false
+                },
+                axisLine:{
+                    show:true
+                },
+                axisLabel:{
+                    color:'#ffffff',
+                    fontSize:nowSize(12),
+                    margin:15
 
-    });
+                }
+            },
+            grid:{
+                top:'25%',
+                left:'15%',
+                right:'5%',
+                bottom:'10%'
+            },
+           
+            series:[
+                {
+                    name:'经编车间产量',
+                    data:datajb.value,
+                    type:'line',
+                    // smooth:true,
+                    label:{
+                        show:true,
+                        position:'top',
+                        color:'#a5b7c2',
+                    },
+                    areaStyle:{
+                        color:new echarts.graphic.LinearGradient(0,0,0,1,[
+                            {offset:0,color:'#107ec7'},
+                            {offset:1,color:'#061731'}
+                        ])
+                    },
+                    emphasis:{
+                        show:true,
+                    }
+
+                },
+                {
+                    name:'整经车间产量',
+                    data:datazj.value,
+                    type:'line',
+                    // smooth:true,
+                    label:{
+                        show:true,
+                        position:'bottom',
+                        color:'#a5b7c2',
+                    },
+                    areaStyle:{
+                        color:new echarts.graphic.LinearGradient(0,0,0,1,[
+                            {offset:0,color:'#3cff00'},
+                            {offset:1,color:'#061731'}
+                        ])
+                    }
+                },
+                {
+                    name:'贾卡产量',
+                    data:datajk.value,
+                    type:'line',
+                    // smooth:true,
+                    label:{
+                        show:true,
+                        position:'top',
+                        color:'#a5b7c2',
+                    },
+                    areaStyle:{
+                        color:new echarts.graphic.LinearGradient(0,0,0,1,[
+                            {offset:0,color:'#e69769'},
+                            {offset:1,color:'#061731'}
+                        ])
+                    },
+                    lineStyle:{
+                        color:'#e69769'
+                    }
+                }
+            ]
+        })
+        let Indexseries=0
+        let Indexdata=0
+        const Interval=setInterval(() => {
+            mychart.dispatchAction({
+                type:'showTip',
+                seriesIndex: Indexseries,
+                dataIndex: Indexdata
+            })
+
+            Indexseries = (Indexseries+1)%3
+            Indexdata = (Indexdata+1)%6
+        }, 1500)
+        onUnmounted(()=>{
+            clearInterval(Interval)
+        })
+    })
+
 
 </script>
-
 <style scoped>
-    .col2 {
-        width: 100.5%;
-        height: 100%;
+     .row1-col2 {
+        width: 20.4vw;
+        height: 30.7vh;
         background-image: url(/src/assets/src/tip3.png);
         background-repeat: no-repeat;
-        background-position: center; 
+        background-position: flex;
         background-size: 100% 100%;
     }
-
     .title {
-        padding-left: 1vw;
+        padding-left: 1.5vw;
         height: 3vh;
-        width: 11.3vw;
+        width: 82%;
         background-image: url(/src/assets/src/stip1.png);
         background-repeat: no-repeat;
         background-position: center; 
         background-size: 100% 100%;
-        color: aliceblue;
+        color: #ffffff;
         line-height: 3vh;
         font-family: 'Microsoft YaHei';
+        font-size: 0.9vw;
+
     }
-
-
-
-    .scroll-container {
-        height: 23vh; 
-        padding: 0px 3px 0px 3px;
-        margin: -2px 1px 1px 1px;
+    .chart{
+        width: 100%;
+        height: 89%;
     }
-
-
+    img{
+        width: 1.9vw;
+        height: 1.7vw;
+        position: absolute;
+        right: 32.9vw;
+    }
 </style>

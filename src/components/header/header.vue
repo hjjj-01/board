@@ -71,7 +71,7 @@
         width: 98vw;
         height: 7.2vh;
         margin-left: 1vw;
-        
+        /* background-color: aqua; */
         
     }
     .el-col{

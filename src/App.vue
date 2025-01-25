@@ -6,7 +6,7 @@
         <div id="title">港益集团中控台</div>
         <div id="company">
           <div class="co"></div>
-          <div :style="{fontFamily:'微软雅黑'}">港丰事业部</div>         
+          <!-- <div :style="{fontFamily:'微软雅黑'}">港丰事业部</div>          -->
         </div>
         <div id="control">
           <span class="active">生产监控</span>
@@ -15,7 +15,7 @@
         </div>
       </div>
       <div class="main">
-        <Header />
+        <!-- <Header /> -->
         <Main />
       </div>
     </div>
@@ -61,7 +61,7 @@
     /* background-color: aquamarine; */
   }
   .header {
-    height: 8vh;
+    height: 8.5vh;
   }
   #date {
     float: left;

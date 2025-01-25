@@ -60,6 +60,7 @@
         background-size: 100% 100%;
         color: #ffffff;
         line-height: 3vh;
+        font-size:0.9vw;
         font-family: 'Microsoft YaHei';
     }
     .chart{

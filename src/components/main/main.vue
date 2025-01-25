@@ -1,40 +1,46 @@
 <template>
     <div>
         <el-row :span="24"  >
-            <el-col :span="4">
+            <el-col :span="6">
+                <Row1Col4/>
+            </el-col>
+            <el-col :span="5">
                 <Row1Col1/>
             </el-col>
-            <el-col :span="3">
+            <el-col :span="5">
                 <Row1Col2/>
             </el-col>
-            <el-col :span="17">
+            <el-col :span="8">
                 <Row1Col3/>
             </el-col>
         </el-row>
         <el-row :span="24" >
-            <el-col :span="4">
-                <Row2Col1/>
-            </el-col>
-            <el-col :span="7">
-                <Row2Col2/>
+            <el-col :span="6">
+
             </el-col>
             <el-col :span="5">
+                <Row2Col1/>
+            </el-col>
+            <el-col :span="5">
+                <Row2Col2/>
+            </el-col>
+            <el-col :span="4">
                 <Row2Col3/>
             </el-col>
-            <el-col :span="8">
+            <el-col :span="4">
                 <Row2Col4/>
             </el-col>
         </el-row>
         <el-row :span="24" >
-            <el-col :span="7">
+            <el-col :span="12">
                 <Row3Col1/>
             </el-col>
-            <el-col :span="13">
+            <el-col :span="12">
                 <Row3Col2/>
             </el-col>
-            <el-col :span="4">
+            <!-- <el-col :span="4">
                 <Row3Col3/>
-            </el-col>
+            </el-col> -->
         </el-row>
     </div>
 </template>
@@ -42,6 +48,7 @@
     import Row1Col1 from './row1/col1.vue'
     import Row1Col2 from './row1/col2.vue'
     import Row1Col3 from './row1/col3.vue'
+    import Row1Col4 from './row1/col4.vue'
     import Row2Col1 from './row2/col1.vue'
     import Row2Col2 from './row2/col2.vue'
     import Row2Col3 from './row2/col3.vue'
@@ -53,7 +60,7 @@
 <style scoped>
     .el-row{
         width: 98vw;
-        height: 27vh;
+        height: 30.5vh;
         margin-left: 1vw;
         
     }

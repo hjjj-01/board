@@ -25,6 +25,7 @@
 
 #custom-table td{
     border-bottom: 1.1px solid rgb(91, 169, 214) !important;
-    height: 0.5vw !important;
+    /* 控制单行单元格的高度 */
+    height: 2.2vw !important;
     padding: 0.2vh 0 !important;
 }

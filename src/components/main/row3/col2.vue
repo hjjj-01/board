@@ -1,15 +1,15 @@
 <template>
     <div class="row3-col2">
-        <div class="title">坯布生产进度跟踪</div>
+        <div class="title">订单进度跟踪</div>
         <el-table  align="center" :data="displayedData" height="23vh" id="custom-table">
             <el-table-column prop="id" label="#" :width=a align="center"/>
             <el-table-column prop="orderNo" label="订单编号" :width=b align="center"/>
-            <el-table-column prop="name" label="坯布名称" :width=c align="center"/>
+            <el-table-column prop="name" label="坯布编号" :width=c align="center"/>
             <el-table-column prop="deliveryDate" label="交货日期" :width=d align="center"/>
             <el-table-column prop="unit" label="单位" align="center" :width=e width="100"/>
             <el-table-column prop="planQty" label="计划量" :width=f align="center"/>
             <el-table-column prop="planQty" label="已排量" :width=g align="center"/> 
-            <el-table-column prop="machineNo" label="机台号" :width=h align="center"/> 
+            <!-- <el-table-column prop="machineNo" label="机台号" :width=h align="center"/>  -->
             <el-table-column prop="inQty" label="入库量" :width=i align="center" /> 
         </el-table>
     </div>
@@ -83,22 +83,23 @@
 <style scoped>
      .row3-col2 {
         width: 100%;
-        height: 100%;
+        height: 27.5vh;
         background-image: url(/src/assets/src/tip3.png);
         background-repeat: no-repeat;
         background-position: flex;
         background-size: 100% 100%;
     }
     .title {
-        padding-left: 2vw;
+        padding-left: 3vw;
         height: 3vh;
-        width: 30vw;
+        width: 94%;
         background-image: url(/src/assets/src/stip1.png);
         background-repeat: no-repeat;
         background-position: center; 
         background-size: 100% 100%;
         color: #ffffff;
         line-height: 3vh;
+        font-size: 0.9vw;
         font-family: 'Microsoft YaHei';
     }
     .chart{

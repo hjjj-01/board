@@ -1,7 +1,8 @@
 <template>
-    <div class="row2-col2">
-        <div class="title">近10日生产效率走势图
-            <img src="/src/assets/src/zs3.png" alt="">
+    <div class="row1-col1">
+        <div class="title">近半年龙湖分厂生产趋势
+            <img src="/src/assets/src/zs3.png"  alt="">
+
         </div>
         <div ref="chart" class="chart">
 
@@ -9,147 +10,143 @@
     </div>
 </template>
 <script setup>
-    import * as echarts from 'echarts'
-    import {ref,onMounted,computed,onUnmounted} from 'vue'
-    import {getRandom2} from '@/assets/src/JS/random'
-    import { useStore } from 'vuex'
+    import { ref,onMounted,onUnmounted } from 'vue'
+    import *as echarts from 'echarts'
+    import {getrandom1} from '@/assets/src/JS/random'
     let nowClientWidth = (document.documentElement.clientWidth);
     function nowSize(val,initWidth=1920){
         return val * (nowClientWidth/initWidth);
     }
 
-    const chart = ref(null)
-    const store = useStore();
-    const data = ref([])
-
+    const datazc=ref()
+    const datawb=ref()
     
+    const chart = ref(null)
     const getdatearray=()=>{
-        const dateArray = [];
-        const today = new Date();
-        for (let i = 0; i < 10; i++) {
-            const date = new Date();
-            date.setDate(today.getDate() - i);
-            dateArray.unshift(`${date.getMonth() + 1}月${date.getDate()}日`); 
+        let datearr=[]
+        const today=new Date()
+        for(let i=0;i<6;i++){
+            const date=new Date()
+            date.setMonth(today.getMonth()-i)
+            datearr.unshift(`${date.getMonth()+1}`)
         }
-        return dateArray;
-        
+        return datearr
     }
+    onMounted(()=>{
+        datazc.value=getrandom1(6,6000,9000)
+        datawb.value=getrandom1(6,3200,4900)
 
-    onMounted(() => {
 
-        const dateArray=getdatearray()
-        //计算平均值
-        data.value=getRandom2(10,86,93)
-        const sum = data.value.reduce((total,num)=>total+num,0)
-        const avarage = (sum/data.value.length).toFixed(2)
-        const mychart = echarts.init(chart.value)
-        //存储当日效率值
-        const nowdata=data.value[9].toFixed(0)
-        store.commit('setnow',nowdata)        
+        const datearr=getdatearray()
 
-        //设置图表
+        const mychart=echarts.init(chart.value)
         mychart.setOption({
-            tooltip: {
+            tooltip:{
                 trigger:'item',
-                formatter:'{b}效率<br>{c}%'
+                formatter:'{b}月份产量 : {c}(吨)'
             },
             xAxis:{
-                type: 'category',
-                data:dateArray,
-                boundaryGap: false,
+                type:'category',
+                data:datearr,
                 axisLabel:{
-                    color: '#fff',
+                    color:'#ffffff',
                     fontSize:nowSize(14)
-                }
+
+                },
+                boundaryGap: false
+            },
+            legend:{
+                show:true,
+                data:['针刺产量','纬编产量'],
+                textStyle:{
+                    color:'#ffffff',
+                    fontSize:nowSize(14)
+                },
+                top:'6%'
             },
             yAxis:{
-                type: 'value',
-                name: '效率(%)',
-                min:70,
-                max:100,
-                axisLabel:{
-                    color: '#fff',
-                    fontSize:nowSize(14)
+                type:'value',
+                
+                splitLine:{
+                    show:false
                 },
-                axisLine:{show:true,lineStyle:{color:'#fff'}},
-                splitLine:{show:false}
+                axisLine:{
+                    show:true
+                },
+                axisLabel:{
+                    color:'#ffffff',
+                    fontSize:nowSize(12),
+                    margin:15
+
+
+                }
             },
             grid:{
-                top: '18%',
-                left: '7%',
-                right: '3%',
-                bottom: '12%'
+                top:'20%',
+                left:'15%',
+                right:'5%',
+                bottom:'12%'
             },
-            graphic:[
+            series:[
                 {
-                    type:'text',
-                    right: '15%',
-                    top: '10%',
-                    style:{
-                        text:`平均值：${avarage}%`,
-                        fill:'#fff',
-                        fontSize:16,
-                        fontWeight:'bold'
+                    name:'针刺产量',
+                    data:datazc.value,
+                    type:'line',
+                    // smooth:true,
+                    label:{
+                        show:true,
+                        position:'top',
+                        color:'#a5b7c2',
+                    },
+                    areaStyle:{
+                        color:new echarts.graphic.LinearGradient(0,0,0,1,[
+                            {offset:0,color:'#107ec7'},
+                            {offset:1,color:'#061731'}
+                        ])
+                    }
+
+                },
+                {
+                    name:'纬编产量',
+                    data:datawb.value,
+                    type:'line',
+                    // smooth:true,
+                    label:{
+                        show:true,
+                        position:'top',
+                        color:'#a5b7c2',
+                    },
+                    areaStyle:{
+                        color:new echarts.graphic.LinearGradient(0,0,0,1,[
+                            {offset:0,color:'#49b67f'},
+                            {offset:1,color:'#061731'}
+                        ])
                     }
                 }
-            ],
-            series:[{
-                type: 'line',
-                data:data.value,
-                
-                areaStyle:{
-                    color: new echarts.graphic.LinearGradient(0,0,0,1,[
-                        {offset:0,color:'#0099FF'},
-                        {offset:1,color:'#061731'},
-                    ])
-                },
-                smooth:true,
-                label:{
-                    show: true,
-                    position: 'top',
-                    color:'#a5b7c2'
-                },
-                lineStyle:{
-                    color:'#59b8d4',
-                },
-                markLine:{
-                    data:[
-                        {
-                            name:'平均值',
-                            yAxis:avarage,
-                            lineStyle:{
-                                color:'#fff',
-                                width:2,
-
-                            },
-                            label:{
-                                show:false,
-                               
-                            }
-                        },
-                        
-                    ]
-                }
-            }]
+            ]
         })
-        let Index=0
+        let Indexseries=0
+        let Indexdata=0
         const Interval=setInterval(() => {
             mychart.dispatchAction({
                 type:'showTip',
-                seriesIndex: 0,
-                dataIndex: Index
+                seriesIndex: Indexseries,
+                dataIndex: Indexdata
             })
-            Index=(Index+1)%10
-        }, 1500)
+            Indexseries = (Indexseries+1)%2
+            Indexdata = (Indexdata+1)%6
+        }, 2000)
         onUnmounted(()=>{
             clearInterval(Interval)
         })
     })
+
+
 </script>
 <style scoped>
-    .row2-col2 {
+     .row1-col1 {
         width: 100%;
-        height: 27vh;
+        height: 30.7vh;
         background-image: url(/src/assets/src/tip3.png);
         background-repeat: no-repeat;
         background-position: flex;
@@ -158,14 +155,15 @@
     .title {
         padding-left: 2vw;
         height: 3vh;
-        width: 24vw;
+        font-size: 0.9vw;
+        width: 80%;
         background-image: url(/src/assets/src/stip1.png);
         background-repeat: no-repeat;
         background-position: center; 
         background-size: 100% 100%;
         color: #ffffff;
         line-height: 3vh;
-        font-family: '';
+        font-family: 'Microsoft YaHei';
     }
     .chart{
         width: 100%;
@@ -175,6 +173,6 @@
         width: 1.9vw;
         height: 1.7vw;
         position: absolute;
-        right: 53.5vw;
+        right: 32.9vw;
     }
 </style>
